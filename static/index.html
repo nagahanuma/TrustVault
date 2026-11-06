@@ -32,10 +32,10 @@
                     <!-- Quick Role Switcher for Live Demo -->
                     <div class="hidden sm:flex items-center space-x-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
                         <span class="text-slate-500 px-2 font-mono text-[11px]">Switch Role:</span>
-                        <button onclick="quickLogin('owner@trustvault.com', 'OwnerPass123!')" class="px-2 py-0.5 rounded-lg hover:bg-slate-800 text-blue-400 transition" title="Owner">📁 Owner</button>
-                        <button onclick="quickLogin('viewer@trustvault.com', 'ViewerPass123!')" class="px-2 py-0.5 rounded-lg hover:bg-slate-800 text-emerald-400 transition" title="Viewer">👀 Viewer</button>
-                        <button onclick="quickLogin('admin@trustvault.com', 'AdminPass123!')" class="px-2 py-0.5 rounded-lg hover:bg-slate-800 text-purple-400 transition" title="Admin">👑 Admin</button>
-                        <button onclick="quickLogin('unauthorized@trustvault.com', 'UserPass123!')" class="px-2 py-0.5 rounded-lg hover:bg-slate-800 text-rose-400 transition" title="Red-Team Attacker">🚫 Red-Team</button>
+                        <button onclick="quickLogin('owner@trustvault.com', '1234')" class="px-2 py-0.5 rounded-lg hover:bg-slate-800 text-blue-400 transition" title="Owner">📁 Owner</button>
+                        <button onclick="quickLogin('viewer@trustvault.com', '1234')" class="px-2 py-0.5 rounded-lg hover:bg-slate-800 text-emerald-400 transition" title="Viewer">👀 Viewer</button>
+                        <button onclick="quickLogin('admin@trustvault.com', '1234')" class="px-2 py-0.5 rounded-lg hover:bg-slate-800 text-purple-400 transition" title="Admin">👑 Admin</button>
+                        <button onclick="quickLogin('unauthorized@trustvault.com', '1234')" class="px-2 py-0.5 rounded-lg hover:bg-slate-800 text-rose-400 transition" title="Red-Team Attacker">🚫 Red-Team</button>
                     </div>
 
                     <div class="text-right">
@@ -73,59 +73,61 @@
         <!-- Notification Toast -->
         <div id="toast" class="hidden fixed bottom-6 right-6 z-50 px-4 py-3 rounded-xl border text-sm shadow-xl flex items-center space-x-3 transition-all duration-300"></div>
 
-        <!-- Logged Out Welcome Hero Banner -->
-        <div id="loggedOutHero" class="glass border border-slate-800 rounded-3xl p-8 sm:p-12 text-center space-y-6 max-w-2xl mx-auto shadow-2xl">
-            <div class="w-16 h-16 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center mx-auto text-indigo-400 text-2xl shadow-inner">
+        <!-- Logged Out Welcome Hero Banner & Authentication Form -->
+        <div id="loggedOutHero" class="glass border border-slate-800 rounded-3xl p-6 sm:p-10 text-center space-y-6 max-w-xl mx-auto shadow-2xl">
+            <div class="w-14 h-14 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center mx-auto text-indigo-400 text-2xl shadow-inner">
                 <i class="fa-solid fa-user-shield"></i>
             </div>
-            <div class="space-y-2">
-                <h2 class="text-2xl sm:text-3xl font-extrabold text-white">TrustVault Authentication Gate</h2>
-                <p class="text-sm text-slate-400 max-w-md mx-auto">
-                    Confidential documents are unreachable without server-side verified credentials. Sign in below or choose a role to begin the live demonstration.
+            <div class="space-y-1">
+                <h2 class="text-2xl font-extrabold text-white">TrustVault Authentication Gate</h2>
+                <p class="text-xs text-slate-400 max-w-md mx-auto">
+                    Confidential documents are unreachable without server-verified credentials. All default passwords are <code class="bg-slate-800 text-amber-300 px-1.5 py-0.5 rounded font-mono font-bold">1234</code>.
                 </p>
             </div>
 
-            <!-- 1-Click Demo Accounts -->
-            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 text-left space-y-3">
-                <div class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center justify-between">
-                    <span>1-Click Demo Login</span>
-                    <span class="text-[11px] text-slate-500 font-mono">Pre-Seeded Accounts</span>
+            <!-- Role Quick-Fill Buttons (Fills ID & Password) -->
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 text-left space-y-2.5">
+                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                    <span>Select Role to Fill Credentials:</span>
+                    <span class="text-amber-400 font-mono text-[11px]">Password: 1234</span>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    <button onclick="quickLogin('owner@trustvault.com', 'OwnerPass123!')" class="p-3 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 text-left transition flex items-center space-x-3 group">
-                        <span class="text-xl">📁</span>
-                        <div>
-                            <div class="text-xs font-bold text-blue-300 group-hover:text-blue-200">Document Owner</div>
-                            <div class="text-[11px] text-slate-400">Upload & grant access</div>
-                        </div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <button type="button" onclick="fillCredentials('owner@trustvault.com', '1234')" class="p-2 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 text-center transition">
+                        <div class="text-base">📁</div>
+                        <div class="text-[11px] font-bold text-blue-300">Owner</div>
                     </button>
-                    <button onclick="quickLogin('viewer@trustvault.com', 'ViewerPass123!')" class="p-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-left transition flex items-center space-x-3 group">
-                        <span class="text-xl">👀</span>
-                        <div>
-                            <div class="text-xs font-bold text-emerald-300 group-hover:text-emerald-200">Authorized Viewer</div>
-                            <div class="text-[11px] text-slate-400">Download permitted files</div>
-                        </div>
+                    <button type="button" onclick="fillCredentials('viewer@trustvault.com', '1234')" class="p-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-center transition">
+                        <div class="text-base">👀</div>
+                        <div class="text-[11px] font-bold text-emerald-300">Viewer</div>
                     </button>
-                    <button onclick="quickLogin('admin@trustvault.com', 'AdminPass123!')" class="p-3 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 text-left transition flex items-center space-x-3 group">
-                        <span class="text-xl">👑</span>
-                        <div>
-                            <div class="text-xs font-bold text-purple-300 group-hover:text-purple-200">System Administrator</div>
-                            <div class="text-[11px] text-slate-400">Verify audit ledger</div>
-                        </div>
+                    <button type="button" onclick="fillCredentials('admin@trustvault.com', '1234')" class="p-2 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 text-center transition">
+                        <div class="text-base">👑</div>
+                        <div class="text-[11px] font-bold text-purple-300">Admin</div>
                     </button>
-                    <button onclick="quickLogin('unauthorized@trustvault.com', 'UserPass123!')" class="p-3 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-left transition flex items-center space-x-3 group">
-                        <span class="text-xl">🚫</span>
-                        <div>
-                            <div class="text-xs font-bold text-rose-300 group-hover:text-rose-200">Red-Team (Attacker)</div>
-                            <div class="text-[11px] text-slate-400">Test server 403 refusal</div>
-                        </div>
+                    <button type="button" onclick="fillCredentials('unauthorized@trustvault.com', '1234')" class="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-center transition">
+                        <div class="text-base">🚫</div>
+                        <div class="text-[11px] font-bold text-rose-300">Red-Team</div>
                     </button>
                 </div>
             </div>
 
-            <div class="pt-2">
-                <button onclick="openLoginModal()" class="text-xs text-indigo-400 hover:text-indigo-300 underline underline-offset-4">Or sign in with custom credentials</button>
-            </div>
+            <!-- The Direct Login Form (ID & Password) -->
+            <form onsubmit="handleHeroLogin(event)" class="space-y-3.5 text-left bg-slate-900/60 p-5 rounded-2xl border border-slate-800">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Email (User ID)</label>
+                    <input type="email" id="heroEmail" required placeholder="owner@trustvault.com" value="owner@trustvault.com"
+                        class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Password</label>
+                    <input type="password" id="heroPassword" required placeholder="1234" value="1234"
+                        class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition font-mono">
+                </div>
+                <button type="submit" id="heroLoginBtn" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-semibold text-sm shadow-lg shadow-indigo-500/20 transition flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                    <span>Authenticate & Enter Vault</span>
+                </button>
+            </form>
         </div>
 
         <!-- Logged In Application Area (Hidden when logged out) -->

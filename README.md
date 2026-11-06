@@ -6,16 +6,24 @@
 
 ---
 
-## 1. Quick Demo Credentials (Pre-Seeded)
+## 1. Demo Credentials & Roles (All Passwords Default to `1234`)
+
+> **Notice:** Automatic login is disabled. All users must authenticate via email (ID) and password to access the platform.
 
 The application automatically seeds with four distinct role accounts:
 
-| Role | Email | Password | Allowed Capabilities |
+| Role | Email (ID) | Password | Allowed Capabilities |
 |:---|:---|:---|:---|
-| **System Administrator** | `admin@trustvault.com` | `AdminPass123!` | System oversight, full audit ledger view, cryptographic chain verification, emergency doc management. |
-| **Document Owner** | `owner@trustvault.com` | `OwnerPass123!` | Upload documents, grant/revoke named user permissions, approve/reject AI suggestions. |
-| **Authorized Viewer** | `viewer@trustvault.com` | `ViewerPass123!` | View and download documents explicitly granted by owners. |
-| **Red-Team / Attacker** | `unauthorized@trustvault.com` | `UserPass123!` | Attempt unshared downloads (demonstrates server-side 403 refusal & audit logging). |
+| **System Administrator** | `admin@trustvault.com` | `1234` | System oversight, full audit ledger view, cryptographic chain verification, emergency doc management. |
+| **Document Owner** | `owner@trustvault.com` | `1234` | Upload documents, grant/revoke named user permissions, approve/reject AI suggestions. |
+| **Authorized Viewer** | `viewer@trustvault.com` | `1234` | View and download documents explicitly granted by owners. |
+| **Red-Team / External Attacker** | `unauthorized@trustvault.com` | `1234` | Attempt unshared downloads (demonstrates server-side 403 refusal & audit logging). |
+
+### How to Sign In:
+1. Open the application at [http://localhost:8000](http://localhost:8000) (or your live Render URL).
+2. The **Authentication Gate** will require you to log in with an email and password.
+3. You can either type the credentials directly into the login form or click one of the pre-fill role buttons to populate the form with `1234`.
+4. Click **Sign In**.
 
 ---
 

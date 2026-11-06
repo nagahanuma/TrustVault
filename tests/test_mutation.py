@@ -13,7 +13,7 @@ def test_mutation_defense_demonstration(client, get_auth_token):
     If the authorization check is bypassed (mocked to succeed for unauthorized users),
     our negative security tests MUST fail.
     """
-    unauthorized_token = get_auth_token("unauthorized@trustvault.com", "UserPass123!")
+    unauthorized_token = get_auth_token("unauthorized@trustvault.com", "1234")
     headers = {"Authorization": f"Bearer {unauthorized_token}"}
 
     db = TestingSessionLocal()

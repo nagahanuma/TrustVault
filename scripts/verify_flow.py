@@ -23,7 +23,7 @@ def run_verification():
         # 1. Login as Document Owner
         res_login = client.post("/api/auth/login", json={
             "email": "owner@trustvault.com",
-            "password": "OwnerPass123!"
+            "password": "1234"
         })
         assert res_login.status_code == 200, f"Owner login failed: {res_login.text}"
         owner_token = res_login.json()["access_token"]
@@ -47,7 +47,7 @@ def run_verification():
         # 3. Unauthorized User Access Attempt (Red-Team Attack)
         res_unauth_login = client.post("/api/auth/login", json={
             "email": "unauthorized@trustvault.com",
-            "password": "UserPass123!"
+            "password": "1234"
         })
         unauth_token = res_unauth_login.json()["access_token"]
         unauth_headers = {"Authorization": f"Bearer {unauth_token}"}
@@ -69,7 +69,7 @@ def run_verification():
         # 5. Viewer Downloads Document (Allowed)
         res_viewer_login = client.post("/api/auth/login", json={
             "email": "viewer@trustvault.com",
-            "password": "ViewerPass123!"
+            "password": "1234"
         })
         viewer_token = res_viewer_login.json()["access_token"]
         viewer_headers = {"Authorization": f"Bearer {viewer_token}"}
@@ -94,7 +94,7 @@ def run_verification():
         # 7. Admin Verifies Cryptographic Audit Ledger
         res_admin_login = client.post("/api/auth/login", json={
             "email": "admin@trustvault.com",
-            "password": "AdminPass123!"
+            "password": "1234"
         })
         admin_token = res_admin_login.json()["access_token"]
         admin_headers = {"Authorization": f"Bearer {admin_token}"}

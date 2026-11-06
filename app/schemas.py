@@ -9,7 +9,7 @@ class UserBase(BaseModel):
     role: str = "VIEWER"
 
 class UserRegister(UserBase):
-    password: str = Field(..., min_length=6)
+    password: str = Field(..., min_length=4)
 
 class UserLogin(BaseModel):
     email: EmailStr

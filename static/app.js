@@ -19,6 +19,20 @@ function getHeaders(isMultipart = false) {
     return headers;
 }
 
+function fillCredentials(email, password = "1234") {
+    const emailField = document.getElementById("heroEmail");
+    const passwordField = document.getElementById("heroPassword");
+    if (emailField) emailField.value = email;
+    if (passwordField) passwordField.value = password;
+}
+
+async function handleHeroLogin(event) {
+    event.preventDefault();
+    const email = document.getElementById("heroEmail").value;
+    const password = document.getElementById("heroPassword").value;
+    await quickLogin(email, password);
+}
+
 function openLoginModal() {
     document.getElementById("loginModal").classList.remove("hidden");
 }

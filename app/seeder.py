@@ -13,58 +13,66 @@ def seed_database(db=None):
         close_db = True
 
     try:
-        # 1. Create Default Users if not existing
+        # 1. Create Default Users if not existing (Default password: "1234")
         admin = db.query(User).filter(User.email == "admin@trustvault.com").first()
         if not admin:
             admin = User(
                 id=generate_uuid(),
                 email="admin@trustvault.com",
-                hashed_password=get_password_hash("AdminPass123!"),
+                hashed_password=get_password_hash("1234"),
                 full_name="Sarah Connor (System Administrator)",
                 role="ADMIN",
                 is_active=True,
                 created_at=utc_now()
             )
             db.add(admin)
+        else:
+            admin.hashed_password = get_password_hash("1234")
 
         owner = db.query(User).filter(User.email == "owner@trustvault.com").first()
         if not owner:
             owner = User(
                 id=generate_uuid(),
                 email="owner@trustvault.com",
-                hashed_password=get_password_hash("OwnerPass123!"),
+                hashed_password=get_password_hash("1234"),
                 full_name="Michael Scott (Document Owner)",
                 role="OWNER",
                 is_active=True,
                 created_at=utc_now()
             )
             db.add(owner)
+        else:
+            owner.hashed_password = get_password_hash("1234")
 
         viewer = db.query(User).filter(User.email == "viewer@trustvault.com").first()
         if not viewer:
             viewer = User(
                 id=generate_uuid(),
                 email="viewer@trustvault.com",
-                hashed_password=get_password_hash("ViewerPass123!"),
+                hashed_password=get_password_hash("1234"),
                 full_name="Jim Halpert (Authorized Viewer)",
                 role="VIEWER",
                 is_active=True,
                 created_at=utc_now()
             )
             db.add(viewer)
+        else:
+            viewer.hashed_password = get_password_hash("1234")
 
         unauthorized = db.query(User).filter(User.email == "unauthorized@trustvault.com").first()
         if not unauthorized:
             unauthorized = User(
                 id=generate_uuid(),
                 email="unauthorized@trustvault.com",
-                hashed_password=get_password_hash("UserPass123!"),
+                hashed_password=get_password_hash("1234"),
                 full_name="Dwight Schrute (External User)",
                 role="VIEWER",
                 is_active=True,
                 created_at=utc_now()
             )
             db.add(unauthorized)
+        else:
+            unauthorized.hashed_password = get_password_hash("1234")
 
         db.commit()
         db.refresh(admin)
