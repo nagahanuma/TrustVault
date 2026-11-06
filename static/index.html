@@ -7,13 +7,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen font-sans flex flex-col">
 
     <!-- Top Navigation Bar -->
-    <header class="border-b border-slate-800 bg-slate-900/80 sticky top-0 z-40 backdrop-blur">
+    <header class="border-b border-slate-800 bg-slate-900/90 sticky top-0 z-40 backdrop-blur">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-indigo-500/20">
@@ -26,39 +26,41 @@
             </div>
 
             <!-- Demo Quick Login / User Panel -->
-            <div id="authPanel" class="flex items-center space-x-4">
-                <!-- Logged In State (Hidden by default) -->
+            <div id="authPanel" class="flex items-center space-x-3">
+                <!-- Logged In State -->
                 <div id="userLoggedIn" class="hidden flex items-center space-x-4">
+                    <!-- Quick Role Switcher for Live Demo -->
+                    <div class="hidden sm:flex items-center space-x-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
+                        <span class="text-slate-500 px-2 font-mono text-[11px]">Switch Role:</span>
+                        <button onclick="quickLogin('owner@trustvault.com', 'OwnerPass123!')" class="px-2 py-0.5 rounded-lg hover:bg-slate-800 text-blue-400 transition" title="Owner">📁 Owner</button>
+                        <button onclick="quickLogin('viewer@trustvault.com', 'ViewerPass123!')" class="px-2 py-0.5 rounded-lg hover:bg-slate-800 text-emerald-400 transition" title="Viewer">👀 Viewer</button>
+                        <button onclick="quickLogin('admin@trustvault.com', 'AdminPass123!')" class="px-2 py-0.5 rounded-lg hover:bg-slate-800 text-purple-400 transition" title="Admin">👑 Admin</button>
+                        <button onclick="quickLogin('unauthorized@trustvault.com', 'UserPass123!')" class="px-2 py-0.5 rounded-lg hover:bg-slate-800 text-rose-400 transition" title="Red-Team Attacker">🚫 Red-Team</button>
+                    </div>
+
                     <div class="text-right">
-                        <div id="userName" class="text-sm font-semibold text-white">Loading...</div>
+                        <div id="userName" class="text-sm font-semibold text-white">User</div>
                         <div class="flex items-center justify-end space-x-2">
                             <span id="userRoleBadge" class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono font-semibold">VIEWER</span>
-                            <span id="userEmail" class="text-xs text-slate-400">user@example.com</span>
+                            <span id="userEmail" class="text-xs text-slate-400">email</span>
                         </div>
                     </div>
-                    <a id="adminNavBtn" href="/admin" class="hidden px-3 py-1.5 text-xs font-medium rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition flex items-center space-x-1.5 shadow">
-                        <i class="fa-solid fa-lock"></i>
+
+                    <a id="adminNavBtn" href="/admin" class="hidden px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition flex items-center space-x-1.5 shadow">
+                        <i class="fa-solid fa-scale-balanced"></i>
                         <span>Audit Trail</span>
                     </a>
+
                     <button onclick="logout()" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition">
-                        <i class="fa-solid fa-right-from-bracket mr-1"></i> Logout
+                        <i class="fa-solid fa-right-from-bracket mr-1"></i> Sign Out
                     </button>
                 </div>
 
-                <!-- Logged Out State (Quick Switch Pills) -->
+                <!-- Logged Out State -->
                 <div id="userLoggedOut" class="flex items-center space-x-2">
-                    <span class="text-xs text-slate-400 mr-2 hidden sm:inline">1-Click Demo Login:</span>
-                    <button onclick="quickLogin('admin@trustvault.com', 'AdminPass123!')" class="px-2.5 py-1 text-xs rounded-lg bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/30 transition">
-                        👑 Admin
-                    </button>
-                    <button onclick="quickLogin('owner@trustvault.com', 'OwnerPass123!')" class="px-2.5 py-1 text-xs rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/30 transition">
-                        📁 Owner
-                    </button>
-                    <button onclick="quickLogin('viewer@trustvault.com', 'ViewerPass123!')" class="px-2.5 py-1 text-xs rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 transition">
-                        👀 Viewer
-                    </button>
-                    <button onclick="quickLogin('unauthorized@trustvault.com', 'UserPass123!')" class="px-2.5 py-1 text-xs rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 transition" title="Test Red-Team Denied Attempt">
-                        🚫 Red-Team
+                    <button onclick="openLoginModal()" class="px-4 py-2 text-xs font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 transition flex items-center space-x-1.5">
+                        <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                        <span>Sign In</span>
                     </button>
                 </div>
             </div>
@@ -71,63 +73,153 @@
         <!-- Notification Toast -->
         <div id="toast" class="hidden fixed bottom-6 right-6 z-50 px-4 py-3 rounded-xl border text-sm shadow-xl flex items-center space-x-3 transition-all duration-300"></div>
 
-        <!-- AI Human-in-the-Loop Suggestions Banner (Only for Owners/Admin) -->
-        <div id="aiBanner" class="hidden bg-gradient-to-r from-indigo-950/60 to-purple-950/60 border border-indigo-500/30 rounded-2xl p-5 shadow-lg backdrop-blur">
-            <div class="flex items-start justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="w-8 h-8 rounded-lg bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-semibold text-white">AI Access Review Recommendations (Human-in-the-Loop)</h3>
-                        <p class="text-xs text-slate-300">The AI suggested these access grants based on document categorization. Access is strictly withheld until you confirm.</p>
-                    </div>
-                </div>
-                <span class="text-xs px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-mono">Guarded AI</span>
+        <!-- Logged Out Welcome Hero Banner -->
+        <div id="loggedOutHero" class="glass border border-slate-800 rounded-3xl p-8 sm:p-12 text-center space-y-6 max-w-2xl mx-auto shadow-2xl">
+            <div class="w-16 h-16 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center mx-auto text-indigo-400 text-2xl shadow-inner">
+                <i class="fa-solid fa-user-shield"></i>
             </div>
-            <div id="aiSuggestionsList" class="mt-4 space-y-2"></div>
-        </div>
-
-        <!-- Actions & Filter Toolbar -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
-            <!-- Search & Category Filters -->
-            <div class="flex flex-wrap items-center gap-3 flex-1">
-                <div class="relative flex-1 min-w-[200px] max-w-md">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-sm"></i>
-                    <input type="text" id="searchInput" placeholder="Search confidential documents..." oninput="debounceSearch()"
-                        class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition">
-                </div>
-                <div class="flex items-center space-x-1.5 overflow-x-auto pb-1 sm:pb-0" id="categoryFilters">
-                    <button onclick="setCategory('ALL')" class="cat-pill active px-3 py-1.5 text-xs rounded-lg font-medium bg-indigo-600 text-white transition">All</button>
-                    <button onclick="setCategory('FINANCIAL')" class="cat-pill px-3 py-1.5 text-xs rounded-lg font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Financial</button>
-                    <button onclick="setCategory('LEGAL')" class="cat-pill px-3 py-1.5 text-xs rounded-lg font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Legal</button>
-                    <button onclick="setCategory('HR')" class="cat-pill px-3 py-1.5 text-xs rounded-lg font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition">HR</button>
-                    <button onclick="setCategory('OPERATIONS')" class="cat-pill px-3 py-1.5 text-xs rounded-lg font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Operations</button>
-                </div>
+            <div class="space-y-2">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white">TrustVault Authentication Gate</h2>
+                <p class="text-sm text-slate-400 max-w-md mx-auto">
+                    Confidential documents are unreachable without server-side verified credentials. Sign in below or choose a role to begin the live demonstration.
+                </p>
             </div>
 
-            <!-- Upload Button (Shown for Owner / Admin) -->
-            <button id="uploadTriggerBtn" onclick="openUploadModal()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white text-sm font-semibold shadow-lg shadow-indigo-500/20 flex items-center justify-center space-x-2 transition">
-                <i class="fa-solid fa-cloud-arrow-up"></i>
-                <span>Upload Document</span>
-            </button>
+            <!-- 1-Click Demo Accounts -->
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 text-left space-y-3">
+                <div class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center justify-between">
+                    <span>1-Click Demo Login</span>
+                    <span class="text-[11px] text-slate-500 font-mono">Pre-Seeded Accounts</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <button onclick="quickLogin('owner@trustvault.com', 'OwnerPass123!')" class="p-3 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 text-left transition flex items-center space-x-3 group">
+                        <span class="text-xl">📁</span>
+                        <div>
+                            <div class="text-xs font-bold text-blue-300 group-hover:text-blue-200">Document Owner</div>
+                            <div class="text-[11px] text-slate-400">Upload & grant access</div>
+                        </div>
+                    </button>
+                    <button onclick="quickLogin('viewer@trustvault.com', 'ViewerPass123!')" class="p-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 text-left transition flex items-center space-x-3 group">
+                        <span class="text-xl">👀</span>
+                        <div>
+                            <div class="text-xs font-bold text-emerald-300 group-hover:text-emerald-200">Authorized Viewer</div>
+                            <div class="text-[11px] text-slate-400">Download permitted files</div>
+                        </div>
+                    </button>
+                    <button onclick="quickLogin('admin@trustvault.com', 'AdminPass123!')" class="p-3 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 text-left transition flex items-center space-x-3 group">
+                        <span class="text-xl">👑</span>
+                        <div>
+                            <div class="text-xs font-bold text-purple-300 group-hover:text-purple-200">System Administrator</div>
+                            <div class="text-[11px] text-slate-400">Verify audit ledger</div>
+                        </div>
+                    </button>
+                    <button onclick="quickLogin('unauthorized@trustvault.com', 'UserPass123!')" class="p-3 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-left transition flex items-center space-x-3 group">
+                        <span class="text-xl">🚫</span>
+                        <div>
+                            <div class="text-xs font-bold text-rose-300 group-hover:text-rose-200">Red-Team (Attacker)</div>
+                            <div class="text-[11px] text-slate-400">Test server 403 refusal</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <div class="pt-2">
+                <button onclick="openLoginModal()" class="text-xs text-indigo-400 hover:text-indigo-300 underline underline-offset-4">Or sign in with custom credentials</button>
+            </div>
         </div>
 
-        <!-- Document Grid / Explorer -->
-        <div id="documentsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            <!-- Documents injected dynamically -->
-        </div>
+        <!-- Logged In Application Area (Hidden when logged out) -->
+        <div id="appArea" class="hidden space-y-6">
 
-        <!-- Empty State -->
-        <div id="emptyState" class="hidden text-center py-16 bg-slate-900/30 border border-dashed border-slate-800 rounded-2xl">
-            <i class="fa-solid fa-folder-closed text-slate-600 text-4xl mb-3"></i>
-            <h3 class="text-base font-semibold text-slate-300">No documents available</h3>
-            <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">Either no files match your search or your current role hasn't been granted access to any files.</p>
+            <!-- AI Human-in-the-Loop Suggestions Banner -->
+            <div id="aiBanner" class="hidden bg-gradient-to-r from-indigo-950/60 to-purple-950/60 border border-indigo-500/30 rounded-2xl p-5 shadow-lg backdrop-blur">
+                <div class="flex items-start justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-lg bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-semibold text-white">AI Access Review Recommendations (Human-in-the-Loop)</h3>
+                            <p class="text-xs text-slate-300">The AI suggested these access grants based on document categorization. Access is strictly withheld until you confirm.</p>
+                        </div>
+                    </div>
+                    <span class="text-xs px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-mono">Guarded AI</span>
+                </div>
+                <div id="aiSuggestionsList" class="mt-4 space-y-2"></div>
+            </div>
+
+            <!-- Actions & Filter Toolbar -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
+                <!-- Search & Category Filters -->
+                <div class="flex flex-wrap items-center gap-3 flex-1">
+                    <div class="relative flex-1 min-w-[200px] max-w-md">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-sm"></i>
+                        <input type="text" id="searchInput" placeholder="Search accessible documents..." oninput="debounceSearch()"
+                            class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition">
+                    </div>
+                    <div class="flex items-center space-x-1.5 overflow-x-auto pb-1 sm:pb-0" id="categoryFilters">
+                        <button onclick="setCategory('ALL')" class="cat-pill active px-3 py-1.5 text-xs rounded-lg font-medium bg-indigo-600 text-white transition">All</button>
+                        <button onclick="setCategory('FINANCIAL')" class="cat-pill px-3 py-1.5 text-xs rounded-lg font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Financial</button>
+                        <button onclick="setCategory('LEGAL')" class="cat-pill px-3 py-1.5 text-xs rounded-lg font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Legal</button>
+                        <button onclick="setCategory('HR')" class="cat-pill px-3 py-1.5 text-xs rounded-lg font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition">HR</button>
+                        <button onclick="setCategory('OPERATIONS')" class="cat-pill px-3 py-1.5 text-xs rounded-lg font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Operations</button>
+                    </div>
+                </div>
+
+                <!-- Upload Button (Shown for Owner / Admin) -->
+                <button id="uploadTriggerBtn" onclick="openUploadModal()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white text-sm font-semibold shadow-lg shadow-indigo-500/20 flex items-center justify-center space-x-2 transition">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    <span>Upload Document</span>
+                </button>
+            </div>
+
+            <!-- Document Grid / Explorer -->
+            <div id="documentsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Documents injected dynamically -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden text-center py-16 bg-slate-900/30 border border-dashed border-slate-800 rounded-2xl">
+                <i class="fa-solid fa-folder-closed text-slate-600 text-4xl mb-3"></i>
+                <h3 class="text-base font-semibold text-slate-300">No documents accessible to this role</h3>
+                <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">Either no files match your search, or your current role hasn't been granted access to any files.</p>
+            </div>
         </div>
     </main>
 
+    <!-- Custom Login Modal -->
+    <div id="loginModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-base font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-lock text-indigo-400"></i>
+                    <span>Sign In to TrustVault</span>
+                </h3>
+                <button onclick="closeLoginModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="handleManualLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Email Address</label>
+                    <input type="email" id="loginEmail" required placeholder="name@trustvault.com"
+                        class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Password</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••"
+                        class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div class="pt-2 flex justify-end space-x-2">
+                    <button type="button" onclick="closeLoginModal()" class="px-4 py-2 text-xs font-semibold rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Cancel</button>
+                    <button type="submit" id="loginSubmitBtn" class="px-4 py-2 text-xs font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white transition flex items-center space-x-1.5">
+                        <span>Sign In</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Upload Modal -->
-    <div id="uploadModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+    <div id="uploadModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 class="text-base font-bold text-white flex items-center space-x-2">
@@ -170,7 +262,7 @@
     </div>
 
     <!-- Manage Permissions Modal -->
-    <div id="permissionsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+    <div id="permissionsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div>
@@ -217,4 +309,3 @@
     <script src="/static/app.js"></script>
 </body>
 </html>
-

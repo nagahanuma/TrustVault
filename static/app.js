@@ -6,7 +6,7 @@ let currentCategory = "ALL";
 let currentSearch = "";
 let selectedDocForPermissions = null;
 
-// --- Authentication & Session ---
+// --- Authentication & Session Management ---
 
 function getHeaders(isMultipart = false) {
     const headers = {};
@@ -17,6 +17,22 @@ function getHeaders(isMultipart = false) {
         headers["Content-Type"] = "application/json";
     }
     return headers;
+}
+
+function openLoginModal() {
+    document.getElementById("loginModal").classList.remove("hidden");
+}
+
+function closeLoginModal() {
+    document.getElementById("loginModal").classList.add("hidden");
+}
+
+async function handleManualLogin(event) {
+    event.preventDefault();
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+    closeLoginModal();
+    await quickLogin(email, password);
 }
 
 async function quickLogin(email, password) {
@@ -56,15 +72,13 @@ function logout() {
     localStorage.removeItem("tv_token");
     localStorage.removeItem("tv_user");
     updateUIForUser();
-    loadDocuments();
-    document.getElementById("aiBanner").classList.add("hidden");
-    showToast("Signed out", "info");
+    showToast("Signed out. Authentication required to view documents.", "info");
 }
 
 async function checkSession() {
     if (!currentToken) {
-        // Auto sign-in as Viewer by default so judges can browse immediately!
-        quickLogin("owner@trustvault.com", "OwnerPass123!");
+        // User starts logged out. Explicit login required!
+        updateUIForUser();
         return;
     }
     try {
@@ -85,12 +99,17 @@ async function checkSession() {
 function updateUIForUser() {
     const loggedInDiv = document.getElementById("userLoggedIn");
     const loggedOutDiv = document.getElementById("userLoggedOut");
+    const loggedOutHero = document.getElementById("loggedOutHero");
+    const appArea = document.getElementById("appArea");
     const adminNavBtn = document.getElementById("adminNavBtn");
     const uploadTriggerBtn = document.getElementById("uploadTriggerBtn");
 
     if (currentUser) {
         loggedInDiv.classList.remove("hidden");
         loggedOutDiv.classList.add("hidden");
+        loggedOutHero.classList.add("hidden");
+        appArea.classList.remove("hidden");
+
         document.getElementById("userName").textContent = currentUser.full_name;
         document.getElementById("userEmail").textContent = currentUser.email;
 
@@ -112,6 +131,8 @@ function updateUIForUser() {
     } else {
         loggedInDiv.classList.add("hidden");
         loggedOutDiv.classList.remove("hidden");
+        loggedOutHero.classList.remove("hidden");
+        appArea.classList.add("hidden");
         adminNavBtn.classList.add("hidden");
         uploadTriggerBtn.classList.add("hidden");
     }
@@ -120,6 +141,8 @@ function updateUIForUser() {
 // --- Documents Explorer ---
 
 async function loadDocuments() {
+    if (!currentUser) return;
+
     const container = document.getElementById("documentsContainer");
     const emptyState = document.getElementById("emptyState");
 
@@ -543,4 +566,3 @@ function escapeHtml(text) {
 document.addEventListener("DOMContentLoaded", () => {
     checkSession();
 });
-
