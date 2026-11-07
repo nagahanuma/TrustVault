@@ -14,6 +14,9 @@ class Settings(BaseSettings):
     # Database (Default: SQLite local file)
     DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./trustvault.db")
     
+    # Default Demo User Password (read from env; defaults to 1234 for demo/grading)
+    DEFAULT_USER_PASSWORD: str = os.getenv("DEFAULT_USER_PASSWORD", "1234")
+    
     # File Limits
     MAX_FILE_SIZE_MB: int = 15
     

@@ -22,7 +22,7 @@ The application strictly implements the **3 required roles** from the specificat
 ### How to Sign In:
 1. Open the application at [http://localhost:8000](http://localhost:8000) (or your live Render URL).
 2. The **Authentication Gate** will require you to log in with an email and password.
-3. You can either type the credentials directly into the login form or click one of the pre-fill role buttons to populate the form with `1234`.
+3. Click any of the quick-fill role buttons to populate the respective email address, then enter the password (default: `1234`) into the password input field.
 4. Click **Sign In**.
 
 ---

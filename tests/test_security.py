@@ -15,7 +15,7 @@ def test_idor_unauthorized_user_cannot_download_restricted_doc(client, get_auth_
     Michael's confidential Project Titan NDA document.
     Must return 403 Forbidden and record refused attempt in Audit Trail.
     """
-    token_unauthorized = get_auth_token("unauthorized@trustvault.com", "1234")
+    token_unauthorized = get_auth_token("unauthorized@trustvault.com")
     headers = {"Authorization": f"Bearer {token_unauthorized}"}
 
     # Locate the confidential document ID
@@ -45,8 +45,8 @@ def test_immediate_access_revocation_lifecycle(client, get_auth_token):
     1. Owner grants Jim READ access -> Jim can download.
     2. Owner revokes Jim's access -> Jim's very next download attempt fails with 403!
     """
-    owner_token = get_auth_token("owner@trustvault.com", "1234")
-    viewer_token = get_auth_token("viewer@trustvault.com", "1234")
+    owner_token = get_auth_token("owner@trustvault.com")
+    viewer_token = get_auth_token("viewer@trustvault.com")
 
     owner_headers = {"Authorization": f"Bearer {owner_token}"}
     viewer_headers = {"Authorization": f"Bearer {viewer_token}"}
@@ -84,7 +84,7 @@ def test_immediate_access_revocation_lifecycle(client, get_auth_token):
 
 def test_executable_upload_blocked(client, get_auth_token):
     """Attack 3: Uploading malicious shell scripts or executables is rejected"""
-    owner_token = get_auth_token("owner@trustvault.com", "1234")
+    owner_token = get_auth_token("owner@trustvault.com")
     headers = {"Authorization": f"Bearer {owner_token}"}
 
     fake_payload = io.BytesIO(b"echo 'malicious script'")
@@ -126,7 +126,7 @@ def test_ai_suggestion_requires_human_approval(client, get_auth_token):
     Phase 4 Guardrail: Machine must NEVER widen access autonomously.
     A human owner must approve the suggestion.
     """
-    owner_token = get_auth_token("owner@trustvault.com", "1234")
+    owner_token = get_auth_token("owner@trustvault.com")
     headers = {"Authorization": f"Bearer {owner_token}"}
 
     # Upload document to trigger AI suggestion
@@ -164,7 +164,7 @@ def test_admin_without_access_cannot_delete_document(client, get_auth_token):
     Admin cannot delete a private document unless granted access or ownership.
     Attempt must return 403 Forbidden and record refused attempt in Audit Trail.
     """
-    admin_token = get_auth_token("admin@trustvault.com", "1234")
+    admin_token = get_auth_token("admin@trustvault.com")
     admin_headers = {"Authorization": f"Bearer {admin_token}"}
 
     db = TestingSessionLocal()

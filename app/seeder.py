@@ -1,4 +1,5 @@
 import hashlib
+from app.config import settings
 from app.database import SessionLocal, Base, engine
 from app.models import User, Document, DocumentPermission, generate_uuid, utc_now
 from app.security import get_password_hash
@@ -13,13 +14,17 @@ def seed_database(db=None):
         close_db = True
 
     try:
-        # 1. Create Default Users if not existing (Default password: "1234")
+        # Load default demo password dynamically from environment
+        seed_password = settings.DEFAULT_USER_PASSWORD
+        seed_hashed_password = get_password_hash(seed_password)
+
+        # 1. Create Default Users if not existing
         admin = db.query(User).filter(User.email == "admin@trustvault.com").first()
         if not admin:
             admin = User(
                 id=generate_uuid(),
                 email="admin@trustvault.com",
-                hashed_password=get_password_hash("1234"),
+                hashed_password=seed_hashed_password,
                 full_name="Sarah Connor (System Administrator)",
                 role="ADMIN",
                 is_active=True,
@@ -27,14 +32,14 @@ def seed_database(db=None):
             )
             db.add(admin)
         else:
-            admin.hashed_password = get_password_hash("1234")
+            admin.hashed_password = seed_hashed_password
 
         owner = db.query(User).filter(User.email == "owner@trustvault.com").first()
         if not owner:
             owner = User(
                 id=generate_uuid(),
                 email="owner@trustvault.com",
-                hashed_password=get_password_hash("1234"),
+                hashed_password=seed_hashed_password,
                 full_name="Michael Scott (Document Owner)",
                 role="OWNER",
                 is_active=True,
@@ -42,14 +47,14 @@ def seed_database(db=None):
             )
             db.add(owner)
         else:
-            owner.hashed_password = get_password_hash("1234")
+            owner.hashed_password = seed_hashed_password
 
         viewer = db.query(User).filter(User.email == "viewer@trustvault.com").first()
         if not viewer:
             viewer = User(
                 id=generate_uuid(),
                 email="viewer@trustvault.com",
-                hashed_password=get_password_hash("1234"),
+                hashed_password=seed_hashed_password,
                 full_name="Jim Halpert (Authorized Viewer)",
                 role="VIEWER",
                 is_active=True,
@@ -57,14 +62,14 @@ def seed_database(db=None):
             )
             db.add(viewer)
         else:
-            viewer.hashed_password = get_password_hash("1234")
+            viewer.hashed_password = seed_hashed_password
 
         unauthorized = db.query(User).filter(User.email == "unauthorized@trustvault.com").first()
         if not unauthorized:
             unauthorized = User(
                 id=generate_uuid(),
                 email="unauthorized@trustvault.com",
-                hashed_password=get_password_hash("1234"),
+                hashed_password=seed_hashed_password,
                 full_name="Dwight Schrute (External User)",
                 role="VIEWER",
                 is_active=True,
@@ -72,7 +77,7 @@ def seed_database(db=None):
             )
             db.add(unauthorized)
         else:
-            unauthorized.hashed_password = get_password_hash("1234")
+            unauthorized.hashed_password = seed_hashed_password
 
         db.commit()
         db.refresh(admin)

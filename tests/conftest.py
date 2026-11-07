@@ -4,6 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.main import app
+from app.config import settings
 from app.database import Base, get_db
 from app.seeder import seed_database
 
@@ -45,8 +46,9 @@ def client():
 
 @pytest.fixture
 def get_auth_token(client):
-    def _get_token(email, password):
-        res = client.post("/api/auth/login", json={"email": email, "password": password})
+    def _get_token(email, password=None):
+        pwd = password if password is not None else settings.DEFAULT_USER_PASSWORD
+        res = client.post("/api/auth/login", json={"email": email, "password": pwd})
         assert res.status_code == 200, f"Login failed for {email}: {res.text}"
         return res.json()["access_token"]
     return _get_token

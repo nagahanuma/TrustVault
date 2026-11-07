@@ -12,18 +12,21 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from fastapi.testclient import TestClient
 from app.main import app
+from app.config import settings
 
 def run_verification():
     print("=" * 60)
     print("Starting TrustVault End-to-End Flow Verification")
     print("=" * 60)
 
+    auth_pwd = settings.DEFAULT_USER_PASSWORD
+
     # with TestClient(app) ensures FastAPI lifespan runs (DB init + seeder)
     with TestClient(app) as client:
         # 1. Login as Document Owner
         res_login = client.post("/api/auth/login", json={
             "email": "owner@trustvault.com",
-            "password": "1234"
+            "password": auth_pwd
         })
         assert res_login.status_code == 200, f"Owner login failed: {res_login.text}"
         owner_token = res_login.json()["access_token"]
@@ -47,7 +50,7 @@ def run_verification():
         # 3. Unauthorized User Access Attempt (Red-Team Attack)
         res_unauth_login = client.post("/api/auth/login", json={
             "email": "unauthorized@trustvault.com",
-            "password": "1234"
+            "password": auth_pwd
         })
         unauth_token = res_unauth_login.json()["access_token"]
         unauth_headers = {"Authorization": f"Bearer {unauth_token}"}
@@ -69,7 +72,7 @@ def run_verification():
         # 5. Viewer Downloads Document (Allowed)
         res_viewer_login = client.post("/api/auth/login", json={
             "email": "viewer@trustvault.com",
-            "password": "1234"
+            "password": auth_pwd
         })
         viewer_token = res_viewer_login.json()["access_token"]
         viewer_headers = {"Authorization": f"Bearer {viewer_token}"}
@@ -94,7 +97,7 @@ def run_verification():
         # 7. Admin Verifies Cryptographic Audit Ledger
         res_admin_login = client.post("/api/auth/login", json={
             "email": "admin@trustvault.com",
-            "password": "1234"
+            "password": auth_pwd
         })
         admin_token = res_admin_login.json()["access_token"]
         admin_headers = {"Authorization": f"Bearer {admin_token}"}
