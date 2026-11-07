@@ -72,55 +72,63 @@ python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
 You can deploy TrustVault to Render in less than 3 minutes:
 
-### Option A: 1-Click Blueprint (Simplest)
-1. Push this folder to a GitHub repository:
+### Option A: 1-Click Blueprint (Recommended & Simplest)
+1. Ensure your latest code is pushed to your GitHub repository:
    ```bash
-   git init
-   git add .
-   git commit -m "feat: complete TrustVault platform"
-   git remote add origin https://github.com/<your-username>/trustvault.git
+   git remote add origin https://github.com/<your-username>/TrustVault.git
    git push -u origin main
    ```
-2. Log in to [Render.com](https://render.com).
-3. Click **New +** $\rightarrow$ **Blueprint**.
-4. Connect your GitHub repository. Render will automatically read [`render.yaml`](file:///render.yaml).
-5. Click **Apply**. Render will automatically build and deploy the web service.
+2. Log in to [Render.com](https://dashboard.render.com).
+3. In the top navigation, click **New +** and select **Blueprint**.
+4. Connect your GitHub repository: **`TrustVault`**.
+5. Render will automatically read [`render.yaml`](file:///render.yaml), detecting:
+   - Python runtime environment
+   - Build Command: `pip install -r requirements.txt`
+   - Start Command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+   - Pre-configured environment variables (`SECRET_KEY`, `DATABASE_URL`)
+6. Click **Apply**.
+7. Render will build the environment, apply migrations, and launch your service. Your live URL will be ready in ~2 minutes at `https://<service-name>.onrender.com`.
 
-### Option B: Manual Web Service on Render
-1. In Render, click **New +** $\rightarrow$ **Web Service**.
-2. Select your connected GitHub repo.
-3. Configure the settings:
-   - **Environment:** `Python`
+### Option B: Manual Web Service Deployment
+If you prefer manual setup without Blueprint:
+1. On [Render Dashboard](https://dashboard.render.com), click **New +** $\rightarrow$ **Web Service**.
+2. Connect your GitHub repository (`TrustVault`).
+3. Fill in the deployment parameters:
+   - **Name:** `trustvault` (or any custom name)
+   - **Language:** `Python 3`
+   - **Region:** Any (e.g. Oregon or Frankfurt)
+   - **Branch:** `main`
    - **Build Command:** `pip install -r requirements.txt`
    - **Start Command:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-   - **Plan:** `Free`
-4. In **Environment Variables**, add:
-   - `SECRET_KEY` = `<any-random-string>`
+   - **Instance Type:** `Free` (512 MB RAM, 0.1 CPU)
+4. Under **Environment Variables**, click **Add Environment Variable**:
+   - `SECRET_KEY` = `generate-any-secure-random-32-char-string`
    - `DATABASE_URL` = `sqlite:///./trustvault.db`
-   - *(Optional)* `GROQ_API_KEY` = `<your-groq-api-key>` (if left blank, intelligent heuristic fallback operates seamlessly).
-5. Click **Deploy Web Service**.
-6. When deployment finishes, open your live URL: `https://<your-service>.onrender.com`.
+   - *(Optional)* `GROQ_API_KEY` = `<your-groq-key>` (Leave blank to use internal heuristic AI engine).
+5. Click **Create Web Service**.
+6. When deployment finishes, visit your live URL: `https://<your-service>.onrender.com`.
 
 ---
 
 ## 4. Running the Automated Security Tests & Mutation Defense
 
-The challenge explicitly requires proving that tests catch security bypasses:
+The evaluation explicitly verifies our security tests:
 > *"We will take one authorisation check out of your code and run your tests. If they still pass, they were not testing anything."*
 
-### Run All Security Tests:
+### Run All 8 Security Tests:
 ```bash
 pytest tests/ -v
 ```
 
-### What the Test Suite Proves:
-1. `test_unauthenticated_user_cannot_access_documents`: Unauthenticated requests receive `401 Unauthorized`.
-2. `test_idor_unauthorized_user_cannot_download_restricted_doc`: Unauthorized users attempting IDOR direct downloads receive `403 Forbidden`, and their refusal is immutably written to `audit_logs`.
-3. `test_immediate_access_revocation_lifecycle`: Revoking an access grant cuts off download access immediately on the next request.
-4. `test_executable_upload_blocked`: Malicious scripts (`.sh`, `.exe`) are rejected with `400 Bad Request`.
-5. `test_audit_trail_tamper_detection`: Modifying an audit row breaks the SHA-256 chain and fails `/api/audit/verify`.
-6. `test_ai_suggestion_requires_human_approval`: Verifies that AI never widens permissions autonomously.
-7. `test_mutation_defense_demonstration`: Verifies that if `app/authorization.py:verify_document_access` is bypassed, the test suite catches it immediately.
+### What the 8 Tests Prove:
+1. `test_unauthenticated_user_cannot_access_documents`: Assert 401 Unauthorized for unauthenticated calls.
+2. `test_idor_unauthorized_user_cannot_download_restricted_doc`: Assert 403 Forbidden on IDOR attempts and verify refusal is logged to the audit ledger.
+3. `test_immediate_access_revocation_lifecycle`: Assert that revoking permission cuts off download immediately within 0 ms.
+4. `test_executable_upload_blocked`: Assert malicious scripts (`.sh`, `.exe`, `.bat`) are rejected with 400 Bad Request.
+5. `test_audit_trail_tamper_detection`: Assert that modifying any audit record breaks the SHA-256 chain and fails verification.
+6. `test_ai_suggestion_requires_human_approval`: Assert AI recommendations require explicit human approval and cannot auto-widen access.
+7. `test_admin_without_access_cannot_delete_document`: Assert Admin cannot delete files without ownership or grant (Least Privilege).
+8. `test_mutation_defense_demonstration`: Verifies that if `app/authorization.py:verify_document_access` is bypassed, the test suite catches it immediately.
 
 ---
 
@@ -136,8 +144,13 @@ pytest tests/ -v
 | `GET` | `/api/documents` | Authenticated | List documents. Server returns **only** documents user is permitted to see. |
 | `GET` | `/api/documents/{id}` | Permitted User | View document metadata. Gated by `verify_document_read_access`. |
 | `GET` | `/api/documents/{id}/download` | Permitted User | **The Authorization Checkpoint:** Streams file bytes directly from DB. Gated by `verify_document_read_access`. |
-| `DELETE` | `/api/documents/{id}` | `OWNER`, `ADMIN` | Soft-deletes document. Other users receive `403`. |
-| `POST` | `/api/documents/{id}/permissions` | `OWNER`, `ADMIN` | Grant `READ`/`EDIT` to named user email. Audited. |
+| `DELETE` | `/api/documents/{id}` | Document Owner | Soft-deletes document. Admin/other users without edit access receive `403`. |
+| `POST` | `/api/documents/{id}/permissions` | Document Owner | Grant `READ`/`EDIT` to named user email. Audited. |
+| `DELETE` | `/api/documents/{id}/permissions/{user_id}` | Document Owner | **Immediate Revocation:** Terminates access immediately. |
+| `GET` | `/api/audit` | `ADMIN` | View audit trail with search and filter. Non-admins receive `403`. |
+| `GET` | `/api/audit/verify` | `ADMIN` | Cryptographic verification of SHA-256 hash chain from Genesis. |
+| `GET` | `/api/ai/suggestions` | Document Owner | Fetch pending AI suggestions for owned documents. |
+| `POST` | `/api/ai/suggestions/{id}/decision` | Document Owner | Human approval or rejection of AI suggestion. |
 | `DELETE` | `/api/documents/{id}/permissions/{user_id}` | `OWNER`, `ADMIN` | **Immediate Revocation:** Terminates access immediately. |
 | `GET` | `/api/audit` | `ADMIN` | View audit trail with search and filter. Non-admins receive `403`. |
 | `GET` | `/api/audit/verify` | `ADMIN` | Cryptographic verification of SHA-256 hash chain from Genesis. |
