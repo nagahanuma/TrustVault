@@ -19,11 +19,16 @@ function getHeaders(isMultipart = false) {
     return headers;
 }
 
-function fillCredentials(email, password = "1234") {
+function fillEmail(email) {
     const emailField = document.getElementById("heroEmail");
-    const passwordField = document.getElementById("heroPassword");
-    if (emailField) emailField.value = email;
-    if (passwordField) passwordField.value = password;
+    if (emailField) {
+        emailField.value = email;
+        const passwordField = document.getElementById("heroPassword");
+        if (passwordField) {
+            passwordField.value = "";
+            passwordField.focus();
+        }
+    }
 }
 
 async function handleHeroLogin(event) {
@@ -187,7 +192,7 @@ async function loadDocuments() {
 }
 
 function renderDocumentCard(doc) {
-    const isOwner = currentUser && (currentUser.id === doc.owner_id || currentUser.role === "ADMIN");
+    const isOwner = currentUser && currentUser.id === doc.owner_id;
     const dateFormatted = new Date(doc.created_at).toLocaleDateString();
     const sizeKB = Math.round(doc.file_size / 1024) || 1;
 

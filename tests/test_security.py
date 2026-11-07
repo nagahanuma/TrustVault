@@ -158,3 +158,32 @@ def test_ai_suggestion_requires_human_approval(client, get_auth_token):
     db.close()
     assert perm_check is None, "AI automatically widened access without human approval!"
 
+def test_admin_without_access_cannot_delete_document(client, get_auth_token):
+    """
+    Separation of Duties / Least Privilege:
+    Admin cannot delete a private document unless granted access or ownership.
+    Attempt must return 403 Forbidden and record refused attempt in Audit Trail.
+    """
+    admin_token = get_auth_token("admin@trustvault.com", "1234")
+    admin_headers = {"Authorization": f"Bearer {admin_token}"}
+
+    db = TestingSessionLocal()
+    confidential_doc = db.query(Document).filter(Document.title.contains("Project Titan")).first()
+    db.close()
+    assert confidential_doc is not None
+
+    res = client.delete(f"/api/documents/{confidential_doc.id}", headers=admin_headers)
+    assert res.status_code == 403, "Security Flaw: Admin without access was able to delete private document!"
+    assert "Access Denied" in res.json()["detail"]
+
+    # Verify refused attempt in audit log
+    db = TestingSessionLocal()
+    refused_log = db.query(AuditLog).filter(
+        AuditLog.user_email == "admin@trustvault.com",
+        AuditLog.document_id == confidential_doc.id,
+        AuditLog.action == "DENIED_ACCESS",
+        AuditLog.status == "DENIED"
+    ).first()
+    db.close()
+    assert refused_log is not None, "Admin refused deletion attempt was not logged to audit trail!"
+

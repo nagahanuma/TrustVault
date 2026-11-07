@@ -10,14 +10,14 @@
 
 > **Notice:** Automatic login is disabled. All users must authenticate via email (ID) and password to access the platform.
 
-The application automatically seeds with four distinct role accounts:
+The application strictly implements the **3 required roles** from the specification, plus an unshared viewer account for verification:
 
-| Role | Email (ID) | Password | Allowed Capabilities |
-|:---|:---|:---|:---|
-| **System Administrator** | `admin@trustvault.com` | `1234` | System oversight, full audit ledger view, cryptographic chain verification, emergency doc management. |
-| **Document Owner** | `owner@trustvault.com` | `1234` | Upload documents, grant/revoke named user permissions, approve/reject AI suggestions. |
-| **Authorized Viewer** | `viewer@trustvault.com` | `1234` | View and download documents explicitly granted by owners. |
-| **Red-Team / External Attacker** | `unauthorized@trustvault.com` | `1234` | Attempt unshared downloads (demonstrates server-side 403 refusal & audit logging). |
+| Required Role | Email (ID) | Password | Allowed Capabilities |
+|:---|:---|:---:|:---|
+| **System Administrator** | `admin@trustvault.com` | `1234` | Full audit ledger view, cryptographic chain verification, system oversight. |
+| **Document Owner** | `owner@trustvault.com` | `1234` | Upload confidential documents, grant/revoke user access, approve/reject AI suggestions. |
+| **Viewer** | `viewer@trustvault.com` | `1234` | View and download documents explicitly granted by the document owner. |
+| *Second Viewer (Unshared)* | `unauthorized@trustvault.com` | `1234` | Used in tests to demonstrate that unshared users cannot reach private documents (Requirement 5 & 10). |
 
 ### How to Sign In:
 1. Open the application at [http://localhost:8000](http://localhost:8000) (or your live Render URL).

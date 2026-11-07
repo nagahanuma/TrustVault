@@ -23,8 +23,8 @@ def grant_permission(
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
 
-    # 2. Authorization: Only owner or admin can grant permissions
-    if doc.owner_id != current_user.id and current_user.role != "ADMIN":
+    # 2. Authorization: Only document owner can grant permissions
+    if doc.owner_id != current_user.id:
         log_audit_event(
             db=db,
             action="DENIED_ACCESS",
@@ -33,10 +33,10 @@ def grant_permission(
             user_email=current_user.email,
             document_id=doc.id,
             document_title=doc.title,
-            details="Unauthorized attempt to grant document permissions",
+            details=f"Unauthorized attempt to grant document permissions by {current_user.role} {current_user.email}",
             request=request
         )
-        raise HTTPException(status_code=403, detail="Only the document owner or an admin can grant permissions")
+        raise HTTPException(status_code=403, detail="Only the document owner can grant permissions")
 
     # 3. Find target user
     target_email = grant_in.user_email.lower().strip()
@@ -111,7 +111,7 @@ def revoke_permission(
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
 
-    if doc.owner_id != current_user.id and current_user.role != "ADMIN":
+    if doc.owner_id != current_user.id:
         log_audit_event(
             db=db,
             action="DENIED_ACCESS",
@@ -120,10 +120,10 @@ def revoke_permission(
             user_email=current_user.email,
             document_id=doc.id,
             document_title=doc.title,
-            details="Unauthorized attempt to revoke permissions",
+            details=f"Unauthorized attempt to revoke permissions by {current_user.role} {current_user.email}",
             request=request
         )
-        raise HTTPException(status_code=403, detail="Only document owner or admin can revoke permissions")
+        raise HTTPException(status_code=403, detail="Only the document owner can revoke permissions")
 
     perm = db.query(DocumentPermission).filter(
         DocumentPermission.document_id == document_id,

@@ -239,8 +239,22 @@ def delete_document(
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
 
-    # Only owner or admin can delete
-    if doc.owner_id != current_user.id and current_user.role != "ADMIN":
+    # Check deletion access:
+    # 1. Document Owner can delete
+    # 2. Or user has explicit active EDIT permission granted
+    has_delete_access = False
+    if doc.owner_id == current_user.id:
+        has_delete_access = True
+    else:
+        perm = db.query(DocumentPermission).filter(
+            DocumentPermission.document_id == document_id,
+            DocumentPermission.user_id == current_user.id,
+            DocumentPermission.revoked_at == None
+        ).first()
+        if perm and perm.permission_level == "EDIT":
+            has_delete_access = True
+
+    if not has_delete_access:
         log_audit_event(
             db=db,
             action="DENIED_ACCESS",
@@ -249,10 +263,13 @@ def delete_document(
             user_email=current_user.email,
             document_id=doc.id,
             document_title=doc.title,
-            details="Unauthorized attempt to delete document",
+            details=f"Unauthorized delete attempt by {current_user.role} ({current_user.email}) without access grant",
             request=request
         )
-        raise HTTPException(status_code=403, detail="Only document owner or admin can delete this document")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access Denied: You do not have permission to delete this document"
+        )
 
     doc.is_deleted = True
     db.commit()
@@ -265,7 +282,7 @@ def delete_document(
         user_email=current_user.email,
         document_id=doc.id,
         document_title=doc.title,
-        details="Document soft deleted",
+        details=f"Document deleted by {current_user.role} {current_user.email}",
         request=request
     )
     return Response(status_code=status.HTTP_204_NO_CONTENT)
